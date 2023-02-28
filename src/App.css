@@ -1,0 +1,62 @@
+body {
+  background-color: black;
+}
+
+.bgHome {
+}
+
+video {
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+}
+
+* {
+  text-decoration: none;
+}
+.bg {
+  /* background-color: black; */
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: bottom;
+  height: 100vh;
+}
+.homeContainer {
+  width: 100%;
+  height: 100vh;
+}
+
+a:hover {
+  color: white;
+  cursor: pointer;
+}
+.navBtn:hover {
+  scale: 1.06;
+  background-color: rgb(34, 2, 2);
+  transition: 0.5s;
+}
+
+.chatIcon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+}
+
+.chatBgColor {
+  background-color: #eee;
+}
+.scale-06 {
+  scale: 0.6;
+}
+.scale-08 {
+  scale: 0.8;
+}
+.chatRounded {
+  position: fixed;
+  right: 20px;
+  bottom: 0px;
+  margin: 5px;
+}
