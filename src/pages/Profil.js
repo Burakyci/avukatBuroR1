@@ -24,11 +24,16 @@ import { useAppDispatch } from "../state/store";
 import { appUpdateProfil } from "../state/slices/auth.slice";
 import { useEffect } from "react";
 import { faHandFist } from "@fortawesome/free-solid-svg-icons";
+import { getProfile } from "../state/slices/auth.slice";
 
 function Profil() {
   const [edit, setEdit] = useState(false);
   const { user, profil } = useSelector((state) => state.auth);
   const dispatch = useAppDispatch();
+
+  React.useEffect(() => {
+    dispatch(getProfile())
+  }, []);
 
   const handlerEdit = () => {
     edit ? setEdit(false) : setEdit(true);
@@ -53,8 +58,20 @@ function Profil() {
   useEffect(() => {
     console.log("Maunt Edildi");
   }, [formik.values.name]);
+
   return (
     <div className="bg-dark">
+      {
+        profil.get?.error ? (
+          <div>
+            <h3>{profil.get?.error}</h3>
+          </div>
+        ) : (<div>
+          {
+            profil.get?.data?.firstName
+          }
+        </div>)
+      }
       <form onSubmit={formik.handleSubmit}>
         <section className="bg-dark">
           <MDBContainer className="py-5 bg-dark">
@@ -151,14 +168,16 @@ function Profil() {
                         {edit ? (
                           <>
                             <MDBCardText className="text-muted bg-dark">
-                              Johnatan Smith
+                              Full name
                             </MDBCardText>
                           </>
                         ) : (
                           <>
                             <div>
                               <MDBCardText className="text-muted bg-dark">
-                                Johnatan Smith
+                                {
+                                  `${profil.get?.data?.firstName} ${profil.get?.data?.lastName}`
+                                }
                               </MDBCardText>
                               <input
                                 onChange={formik.handleChange}

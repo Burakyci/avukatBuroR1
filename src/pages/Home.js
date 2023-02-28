@@ -1,13 +1,13 @@
 import React from "react";
 import Chat from "../components/Chat";
-import videoBg from "../assets/video/homeBg1.mp4";
+// import videoBg from "../assets/video/homeBg1.mp4";
 
 function Home() {
   return (
     <div className="bgHome">
-      <video autoPlay muted loop>
+      {/* <video autoPlay muted loop>
         <source src={videoBg} type="video/mp4"></source>
-      </video>
+      </video> */}
 
       <div className="homeContainer d-flex justify-content-evenly align-items-center">
         <div>asdas</div>

@@ -1,6 +1,6 @@
 import { async } from "@firebase/util";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import AuthService from "../../services/AuthService";
+import authService from "../../services/AuthService";
 
 const initialState = {
   user: null,
@@ -12,11 +12,17 @@ const initialState = {
     loading: false,
     error: null,
   },
-  profil: {
-    loading: false,
-    photo: null,
-    name: null,
-    error: null,
+  profil: { //update and get oprations 
+    update: {
+      loading: false,
+      data: null, //profile model
+      error: null,
+    },
+    get: {
+      loading: false,
+      data: null, //profile model
+      error: null,
+    }
   },
 };
 
@@ -24,7 +30,7 @@ export const appLogin = createAsyncThunk(
   "auth/appLogin",
   async (values, { rejectWithValue }) => {
     try {
-      const user = await AuthService.login(values.email, values.password);
+      const user = await authService.login(values.email, values.password);
       return user;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -36,7 +42,7 @@ export const appSingup = createAsyncThunk(
   "auth/appSingup",
   async (values, { rejectWithValue }) => {
     try {
-      const user = await AuthService.register(values.email, values.password);
+      const user = await authService.register(values.email, values.password);
       return user;
     } catch (error) {
       return rejectWithValue(error.message);
@@ -48,7 +54,7 @@ export const appLogout = createAsyncThunk(
   "auth/appLogout",
   async (_, { rejectWithValue }) => {
     try {
-      await AuthService.logout();
+      await authService.logout();
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -59,11 +65,21 @@ export const appUpdateProfil = createAsyncThunk(
   "auth/updateProfil",
   async (values, { rejectWithValue }) => {
     try {
-      const user = await AuthService.updateProfil(values.name, values.photo);
+      const user = await authService.updateProfil(values.name, values.photo);
       return user;
     } catch (error) {
       return rejectWithValue(error.message);
     }
+  }
+);
+
+export const getProfile = createAsyncThunk(
+  "auth/getProfile",
+  async (_, { rejectWithValue }) => {
+    const result = await authService.getProfile();
+    if (!result.success)
+      return rejectWithValue(result.message);
+    return result.data;
   }
 );
 
@@ -109,19 +125,45 @@ const authSlice = createSlice({
       });
     builder
       .addCase(appUpdateProfil.pending, (state) => {
-        state.profil.loading = true;
-        state.profil.error = null;
+        state.profil.update = {
+          loading: true,
+          error: null
+        }
       })
       .addCase(appUpdateProfil.fulfilled, (state, action) => {
-        state.profil.loading = false;
-        state.profil.error = null;
-        state.profil.photo = action.payload;
-        state.profil.name = action.payload;
+        state.profil.update = {
+          loading: false,
+          error: null,
+          data: action.payload
+        }
       })
       .addCase(appUpdateProfil.rejected, (state, action) => {
-        state.profil.loading = false;
-        state.profil.error = action.payload;
+        state.profil.update = {
+          loading: false,
+          error: action.payload
+        }
       });
+    builder
+      .addCase(getProfile.pending, (state) => {
+        state.profil.get = {
+          loading: true,
+          error: null
+        }
+      })
+      .addCase(getProfile.fulfilled, (state, action) => {
+        state.profil.get = {
+          loading: false,
+          error: null,
+          data: action.payload
+        }
+      })
+      .addCase(getProfile.rejected, (state, action) => {
+        state.profil.get = {
+          loading: false,
+          error: action.payload
+        }
+      });
+
   },
 });
 

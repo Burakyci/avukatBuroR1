@@ -7,7 +7,10 @@ import {
   updateEmail,
   FacebookAuthProvider,
 } from "firebase/auth";
-import { fireAuth } from "../config/FirebaseConfig";
+import { collection, query, getDoc, doc } from 'firebase/firestore';
+import { fireAuth, fireDb } from "../config/FirebaseConfig";
+import { OperationResult } from '../models/common-models';
+import { Profile } from '../models/auth-models';
 
 export class AuthService {
   register = async (email, password) => {
@@ -43,7 +46,7 @@ export class AuthService {
     try {
       await signOut(fireAuth);
       return true;
-    } catch (error) {}
+    } catch (error) { }
   };
 
   // verification = async () => {
@@ -53,6 +56,32 @@ export class AuthService {
   //     console.log(error, "hata");
   //   }
   // };
+
+  async getProfile() {
+    try {
+      const colRef = collection(fireDb, 'users');
+      const userId = fireAuth.currentUser.uid;
+      const docRef = doc(colRef, userId);
+      const q = query(docRef);
+      const userDoc = await getDoc(q);
+      if (userDoc.exists()) {
+        return new OperationResult({
+          success: true,
+          data: new Profile(userDoc.id, userDoc.data())
+        });
+      } else {
+        return new OperationResult({
+          success: false,
+          message: 'Profile bilgisi bulunmuyor.'
+        });
+      }
+    } catch (error) {
+      return new OperationResult({
+        success: false,
+        message: error.message
+      });
+    }
+  }
 
   updateProfil = async (
     name,
@@ -68,6 +97,8 @@ export class AuthService {
       console.log(error.message);
     }
   };
+
+
 }
 
 export default new AuthService();
